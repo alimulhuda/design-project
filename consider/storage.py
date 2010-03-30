@@ -194,7 +194,7 @@ class WebPageCache:
         tempFileName = self._getTempCacheLocation(webPage)
         tempFileName = os.path.join(tempFileName, str(datetime.datetime.now().isoformat()))
         tempFile = codecs.open(tempFileName, encoding='utf-8', mode='w')
-        tempFile.write(webPageContent)
+        tempFile.write(webPageContent.decode('utf-8'))
         tempFile.close()
         os.rename(tempFileName, absCacheLocation)
         log.msg('WebPageCache.webPageDownloaded(): cached ' + str(webPage) + ' at ' + absCacheLocation)
@@ -230,8 +230,8 @@ class WebPageCache:
         try:
             latestFile = os.path.join(cacheLocation, listOfFiles[0])
             olderFile = os.path.join(cacheLocation, listOfFiles[1])
-            latestFileContents = [ line for line in open(latestFile, encoding='utf-8')]
-            olderFileContents = [ line for line in open(olderFile, encoding='utf-8')]
+            latestFileContents = [ line for line in codecs.open(latestFile, encoding='utf-8')]
+            olderFileContents = [ line for line in codecs.open(olderFile, encoding='utf-8')]
             return (olderFileContents, latestFileContents)
         except IndexError:
             # no older file found; no diff
