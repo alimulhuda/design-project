@@ -7,13 +7,21 @@ from consider.settings import Settings
 from consider.updatechecker import UpdateCheckerController
 
 class UpdateDisplayController:
-    def __init__ (self, settingsModel = None, updateChecker = None):
+    def __init__ (self, settingsModel = None, updateChecker = None, systrayIcon = None):
         if settingsModel == None:
             settingsModel = Settings()
         self._model = UpdateDisplayModel(settingsModel, updateChecker)
         self._view = UpdateDisplayView(self._model)
+        self._systemTrayIcon = systrayIcon
 
     def show (self):
+        if (self._systemTrayIcon != None):
+            from consider.configuration import ClientConfiguration
+            clientConf = ClientConfiguration()
+            iconLocation = QString(clientConf.getSystrayIcon())
+            icon = QIcon(iconLocation)
+            self._systemTrayIcon.setIcon(icon)
+
         self._view.show()
         self._view.updateUi()
 

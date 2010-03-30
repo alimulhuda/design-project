@@ -61,11 +61,17 @@ class ClientApplication():
         webPages = self.updateChecker.checkForUpdates(forced)
         print('DEBUG: found %s updates' % (len(webPages),))
         if len(webPages) > 0:
+            from consider.configuration import ClientConfiguration
+            clientConf = ClientConfiguration()
+            iconLocation = QString(clientConf.getNewNotificationIcon())
+            icon_new = QIcon(iconLocation)
+            self.systemTrayIcon.setIcon(icon_new)
             self.updateChecker.showNotification(webPages);
 
     def _showDiffWindow(self):
         if self.diffDialog == None:
-            self.diffDialog = UpdateDisplayController(updateChecker = self.updateChecker)
+            self.diffDialog = UpdateDisplayController(updateChecker = self.updateChecker, systrayIcon = self.systemTrayIcon)
+        
         self.diffDialog.show()
 
     def _showSettings(self):

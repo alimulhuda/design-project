@@ -155,7 +155,7 @@ class UpdateCheckerView(QDialog):
     def showDiffWindow(self):
         from consider.updatedisplay import UpdateDisplayController
         if self.diffDialog == None:
-            self.diffDialog = UpdateDisplayController(updateChecker = self._controller)
+            self.diffDialog = UpdateDisplayController(updateChecker = self._controller, systrayIcon = self._systemTrayIcon)
         self.diffDialog.show()
 
     def fixPosition(self):
