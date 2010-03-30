@@ -1,4 +1,5 @@
 import hashlib
+import codecs
 import sqlite3
 import os.path
 
@@ -183,7 +184,6 @@ class WebPageCache:
         return
 
     def webPageDownloaded(self, webPageContent, webPage):
-        import tempfile
         import datetime
 
         log.msg('WebPabeCache.webPageDownloaded(): got contents of ' + webPage)
@@ -193,7 +193,7 @@ class WebPageCache:
 
         tempFileName = self._getTempCacheLocation(webPage)
         tempFileName = os.path.join(tempFileName, str(datetime.datetime.now().isoformat()))
-        tempFile = open(tempFileName, 'w')
+        tempFile = codecs.open(tempFileName, encoding='utf-8', mode='w')
         tempFile.write(webPageContent)
         tempFile.close()
         os.rename(tempFileName, absCacheLocation)
@@ -212,13 +212,13 @@ class WebPageCache:
         cacheLocation = self._getCacheLocation(webPage)
         entries = os.listdir(cacheLocation)
         entries.sort(reverse=True)
-        log.msg('WebPageCache.getCacheEntries(): caching entries are ' + str(entries))
+        log.msg('WebPageCache.getCacheEntries(): ' + str(len(entries)) + ' entries cached')
         return entries
 
     def getContentsForEntry(self, webPage, entry):
         cacheLocation = self._getCacheLocation(webPage)
         path = os.path.join(cacheLocation, entry)
-        contents = [ line for line in open(path)]
+        contents = [ line for line in codecs.open(path, encoding='utf-8')]
         return contents
 
     def getContentsForDiff(self, website):
@@ -230,8 +230,8 @@ class WebPageCache:
         try:
             latestFile = os.path.join(cacheLocation, listOfFiles[0])
             olderFile = os.path.join(cacheLocation, listOfFiles[1])
-            latestFileContents = [ line for line in open(latestFile)]
-            olderFileContents = [ line for line in open(olderFile)]
+            latestFileContents = [ line for line in open(latestFile, encoding='utf-8')]
+            olderFileContents = [ line for line in open(olderFile, encoding='utf-8')]
             return (olderFileContents, latestFileContents)
         except IndexError:
             # no older file found; no diff
@@ -243,6 +243,7 @@ class WebPageCache:
         import urlparse
 
         from consider.rules import inputrules
+        from consider import diff
 
         unprocessedSoup = BeautifulSoup(''.join(content))
 
@@ -265,6 +266,9 @@ class WebPageCache:
                 soup = inputrules.nameRules[rule](soup)
 
         processedContent = soup.body(text = True)
+
+        processedContent = [diff.unescapeEntities(line) for line in processedContent]
+
         return processedContent
 
     def _removeBlanks(self, content):
@@ -364,10 +368,10 @@ class WebPageCache:
 
         #TODO fix unicode errors
         if debug.verbose:
-            fileOldText = open ('oldtext.txt', 'w')
+            fileOldText = codecs.open('oldtext.txt', encoding='utf-8', mode='w')
             fileOldText.write('\n'.join(processedOldContent))
             fileOldText.close()
-            fileNewText = open ('newtext.txt', 'w')
+            fileNewText = codecs.open('newtext.txt', encoding='utf-8', mode='w')
             fileNewText.write('\n'.join(processedNewContent))
             fileNewText.close()
 
