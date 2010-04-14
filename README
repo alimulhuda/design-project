@@ -1,10 +1,15 @@
-
 Web Site Monitoring and Update Notification 
 
 (codename: consider)
 
 This is a client-server program that allows users to monitor websites for 
-changes. This is currently exteremly unstable. Development has barely started.
+changes. This is currently extremely unstable. Development has barely started.
+
+Requires :
+Python 2.6
+PyQt 4
+Twisted
+BeautifulSoup 3.0
 
 Developers:
   Syed Alimul Huda
